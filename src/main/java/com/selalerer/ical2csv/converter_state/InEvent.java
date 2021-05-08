@@ -6,18 +6,19 @@ import com.selalerer.ical2csv.utils.ICalDateTimeParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 @Slf4j
 public class InEvent implements ConverterState {
 
-    private final CSVWriter writer;
+    private final Consumer<CalendarEvent> consumer;
     private final LocalDateTime fromTime;
     private final LocalDateTime toTime;
     private final CalendarEvent event = new CalendarEvent();
     private final ICalDateTimeParser dateTimeParser = new ICalDateTimeParser();
 
-    public InEvent(CSVWriter writer, LocalDateTime fromTime, LocalDateTime toTime) {
-        this.writer = writer;
+    public InEvent(Consumer<CalendarEvent> consumer, LocalDateTime fromTime, LocalDateTime toTime) {
+        this.consumer = consumer;
         this.fromTime = fromTime;
         this.toTime = toTime;
     }
@@ -29,7 +30,7 @@ public class InEvent implements ConverterState {
         if ("END:VEVENT".equals(line)) {
             if (event.getStartTime() != null) {
                 if (!event.getStartTime().isBefore(fromTime)) {
-                    writer.writeNext(event.toStringArray());
+                    consumer.accept(event);
                 }
 
                 if (event.getStartTime().isAfter(toTime)) {
@@ -38,7 +39,7 @@ public class InEvent implements ConverterState {
                     return null;
                 }
             }
-            return new NotInEvent(writer, fromTime, toTime);
+            return new NotInEvent(consumer, fromTime, toTime);
         }
 
         if (line.startsWith("DTSTART:")) {
