@@ -56,6 +56,7 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
             toDate = month.plusMonths(1).minusDays(1);
 
             Path monthFile = createMonthFilename(csvFile, month);
+            log.info("Writing file {}", monthFile);
 
             try (var csvWriter = new CSVWriter(new OutputStreamWriter(Files.newOutputStream(monthFile)));) {
                 writeCsvHeader(csvWriter, fromDate, toDate);
@@ -82,13 +83,9 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
         var timeSlot = startTimeSlot;
 
         do {
-
-            //log.info("Writing CSV line for time slot {}", timeSlot.format(DateTimeFormatter.ISO_LOCAL_TIME));
             writeCsvLine(csvWriter, timeSlot, fromDate, toDate);
 
-            log.info("SELA: timeSlot = {}. endTimeSlot = {}", timeSlot, endTimeSlot);
             if (timeSlot.equals(endTimeSlot)) {
-                log.info("Breaking after last time slot");
                 break;
             }
 
@@ -105,11 +102,6 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
         line.add(timeSlot.format(DateTimeFormatter.ISO_LOCAL_TIME));
 
         var date = fromDate;
-
-        log.info("Iterating from date {} to date {} for time slot {}",
-                fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                toDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                timeSlot.format(DateTimeFormatter.ISO_LOCAL_TIME));
 
         while (!date.isAfter(toDate)) {
 
@@ -136,10 +128,6 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
         headers.add("");
 
         var date = fromDate;
-
-        log.info("Iterating from date {} to date {} for headers",
-                fromDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                toDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         while (!date.isAfter(toDate)) {
             if (datesWithEvents.contains(date)) {
