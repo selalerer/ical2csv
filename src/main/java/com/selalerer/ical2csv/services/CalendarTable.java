@@ -2,6 +2,7 @@ package com.selalerer.ical2csv.services;
 
 import com.opencsv.CSVWriter;
 import com.selalerer.ical2csv.model.CalendarEvent;
+import com.selalerer.ical2csv.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 @Slf4j
 @Service
-public class CalendarTableBuilder implements Consumer<CalendarEvent> {
+public class CalendarTable implements Consumer<CalendarEvent> {
 
     private final Map<LocalDateTime, String> timeSlotToSummaryMap = new HashMap<>();
 
@@ -41,7 +45,7 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
         }
     }
 
-    public void toCsv(Path csvFile, int fromHour, int toHour) throws IOException {
+    public void toCsv(Path csvFile, int fromHour, int toHour) {
 
         var fromDate = minTimeSlot.toLocalDate();
         var toDate = maxTimeSlot.toLocalDate();
@@ -58,9 +62,13 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
             Path monthFile = createMonthFilename(csvFile, month);
             log.info("Writing file {}", monthFile);
 
-            try (var csvWriter = new CSVWriter(new OutputStreamWriter(Files.newOutputStream(monthFile)));) {
+            try (var csvWriter = new CSVWriter(new OutputStreamWriter(
+                    Files.newOutputStream(monthFile, CREATE, TRUNCATE_EXISTING)));) {
+
                 writeCsvHeader(csvWriter, fromDate, toDate);
                 writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             month = month.plusMonths(1);
@@ -68,11 +76,8 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
     }
 
     private Path createMonthFilename(Path csvFile, LocalDate month) {
-        var origFilename = csvFile.toString();
-        return Path.of(FilenameUtils.getPath(origFilename) +
-                FilenameUtils.getBaseName(origFilename) +
-                String.format("_%04d_%02d", month.getYear(), month.getMonthValue()) +
-                ".csv");
+        return FileUtils.addSuffix(csvFile,
+                String.format("_%04d_%02d", month.getYear(), month.getMonthValue()));
     }
 
     private void writeCsvLines(CSVWriter csvWriter, LocalDate fromDate, LocalDate toDate,
