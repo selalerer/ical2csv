@@ -41,7 +41,7 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
         }
     }
 
-    public void toCsv(Path csvFile) throws IOException {
+    public void toCsv(Path csvFile, int fromHour, int toHour) throws IOException {
 
         var fromDate = minTimeSlot.toLocalDate();
         var toDate = maxTimeSlot.toLocalDate();
@@ -59,7 +59,7 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
 
             try (var csvWriter = new CSVWriter(new OutputStreamWriter(Files.newOutputStream(monthFile)));) {
                 writeCsvHeader(csvWriter, fromDate, toDate);
-                writeCsvLines(csvWriter, fromDate, toDate);
+                writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
             }
 
             month = month.plusMonths(1);
@@ -74,15 +74,23 @@ public class CalendarTableBuilder implements Consumer<CalendarEvent> {
                 ".csv");
     }
 
-    private void writeCsvLines(CSVWriter csvWriter, LocalDate fromDate, LocalDate toDate) {
+    private void writeCsvLines(CSVWriter csvWriter, LocalDate fromDate, LocalDate toDate,
+                               int startHour, int endHour) {
 
-        var startTimeSlot = LocalTime.of(0, 0);
+        var startTimeSlot = LocalTime.of(startHour, 0);
+        var endTimeSlot = LocalTime.of(endHour, 0);
         var timeSlot = startTimeSlot;
 
         do {
 
-            log.info("Writing CSV line for time slot {}", timeSlot.format(DateTimeFormatter.ISO_LOCAL_TIME));
+            //log.info("Writing CSV line for time slot {}", timeSlot.format(DateTimeFormatter.ISO_LOCAL_TIME));
             writeCsvLine(csvWriter, timeSlot, fromDate, toDate);
+
+            log.info("SELA: timeSlot = {}. endTimeSlot = {}", timeSlot, endTimeSlot);
+            if (timeSlot.equals(endTimeSlot)) {
+                log.info("Breaking after last time slot");
+                break;
+            }
 
             timeSlot = timeSlot.plusMinutes(30);
 

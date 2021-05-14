@@ -11,7 +11,7 @@ public class ConverterStateMachine {
     private ConverterState state;
 
     public ConverterStateMachine(Consumer<CalendarEvent> consumer, LocalDateTime fromTime, LocalDateTime toTime) {
-        state = new NotInEvent(consumer, fromTime, toTime);
+        state = new NotInEvent(ConverterStateContext.of(consumer, fromTime, toTime, null));
     }
 
     public boolean process(String line) {

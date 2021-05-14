@@ -27,6 +27,6 @@ public class ConsoleInterface {
 
         convertingService.readAll(icalFile, LocalDateTime.MIN, LocalDateTime.MAX, builder);
 
-        builder.toCsv(outputFile);
+        builder.toCsv(outputFile, 8, 21);
     }
 }

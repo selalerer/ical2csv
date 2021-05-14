@@ -8,20 +8,22 @@ import java.util.function.Consumer;
 
 public class NotInEvent implements ConverterState {
 
-    private final Consumer<CalendarEvent> consumer;
-    private final LocalDateTime fromTime;
-    private final LocalDateTime toTime;
+    private final ConverterStateContext context;
 
-    public NotInEvent(Consumer<CalendarEvent> consumer, LocalDateTime fromTime, LocalDateTime toTime) {
-        this.consumer = consumer;
-        this.fromTime = fromTime;
-        this.toTime = toTime;
+    public NotInEvent(ConverterStateContext context) {
+        this.context = context;
     }
 
     @Override
     public ConverterState process(String line) {
-        return "BEGIN:VEVENT".equals(line) ?
-                new InEvent(consumer, fromTime, toTime) :
-                this;
+        if ("BEGIN:VEVENT".equals(line)) {
+            return new InEvent(context);
+        }
+
+        if ("BEGIN:VTIMEZONE".equals(line)) {
+            return new InTimezone(context);
+        }
+
+        return this;
     }
 }
