@@ -1,7 +1,6 @@
 package com.selalerer.ical2csv.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +11,11 @@ import java.nio.file.Path;
 public class ApplicationInterfaceSelector implements CommandLineRunner {
 
     private final ConsoleInterface consoleInterface;
+    private final GraphicInterface graphicInterface;
 
-    public ApplicationInterfaceSelector(ConsoleInterface consoleInterface) {
+    public ApplicationInterfaceSelector(ConsoleInterface consoleInterface, GraphicInterface graphicInterface) {
         this.consoleInterface = consoleInterface;
+        this.graphicInterface = graphicInterface;
     }
 
     @Override
@@ -23,8 +24,7 @@ public class ApplicationInterfaceSelector implements CommandLineRunner {
         if (args.length > 0) {
             consoleInterface.run(Path.of(args[0]));
         } else {
-            // TODO
-            log.error("Please provide file name (currently only supporting console interface)");
+            graphicInterface.run();
         }
     }
 }
