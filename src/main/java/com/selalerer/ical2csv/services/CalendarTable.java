@@ -62,11 +62,17 @@ public class CalendarTable implements Consumer<CalendarEvent> {
             Path monthFile = createMonthFilename(csvFile, month);
             log.info("Writing file {}", monthFile);
 
-            try (var csvWriter = new CSVWriter(new OutputStreamWriter(
-                    Files.newOutputStream(monthFile, CREATE, TRUNCATE_EXISTING)));) {
+	    try (var csvStream = Files.newOutputStream(monthFile, CREATE, TRUNCATE_EXISTING)) {
+		    // Write UTF-8 BOM
+		    csvStream.write(0xef);
+		    csvStream.write(0xbb);
+		    csvStream.write(0xbf);
 
-                writeCsvHeader(csvWriter, fromDate, toDate);
-                writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
+		    try (var csvWriter = new CSVWriter(new OutputStreamWriter(csvStream,"utf-8"));) {
+
+			writeCsvHeader(csvWriter, fromDate, toDate);
+			writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
+		    }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
