@@ -13,7 +13,7 @@ public class ICalDateTimeParserTest {
     public void parse_noTimezone() {
         var testSubject = new ICalDateTimeParser();
 
-        var result = testSubject.parse("20110406T143000Z", null);
+        var result = testSubject.parse("20110406T143000Z", ZoneId.of("UTC"), null);
         var expected = LocalDateTime.of(2011, 04, 06, 14, 30, 00);
 
         assertEquals(expected, result);
@@ -23,7 +23,7 @@ public class ICalDateTimeParserTest {
     public void parse_withTimezone() {
         var testSubject = new ICalDateTimeParser();
 
-        var result = testSubject.parse("20110406T143000Z", ZoneId.of("Asia/Jerusalem"));
+        var result = testSubject.parse("20110406T143000Z", ZoneId.of("UTC"), ZoneId.of("Asia/Jerusalem"));
         var expected = LocalDateTime.of(2011, 04, 06, 17, 30, 00);
 
         assertEquals(expected, result);

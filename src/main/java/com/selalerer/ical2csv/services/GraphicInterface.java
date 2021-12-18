@@ -129,6 +129,7 @@ public class GraphicInterface {
 
             var toTime = Optional.ofNullable(toDate.getDate())
                     .map(DateTimeUtils::toLocalDateTime)
+                    .map(d -> d.plusDays(1)) // To the end of the day
                     .orElseGet(() -> propertiesProvider.getToTime());
 
             new Thread( () -> {

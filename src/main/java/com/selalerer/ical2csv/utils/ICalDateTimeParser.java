@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
 @Component
 public class ICalDateTimeParser {
 
-    public LocalDateTime parse(String icalDateTime, ZoneId timezone) {
+    public LocalDateTime parse(String icalDateTime, ZoneId fromTimeZone, ZoneId toTimezone) {
         // YYYYMMDDTHHmmSS
         var year = Integer.parseInt(icalDateTime.substring(0, 4));
         var month = Integer.parseInt(icalDateTime.substring(4,6));
@@ -21,6 +21,6 @@ public class ICalDateTimeParser {
 
         var dateTime = LocalDateTime.of(year, month, day, hour, minute, second);
 
-        return DateTimeUtils.migrateTimezone(dateTime, ZoneId.of("UTC"), timezone);
+        return DateTimeUtils.migrateTimezone(dateTime, fromTimeZone, toTimezone);
     }
 }
