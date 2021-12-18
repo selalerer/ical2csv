@@ -21,9 +21,6 @@ public class ICalDateTimeParser {
 
         var dateTime = LocalDateTime.of(year, month, day, hour, minute, second);
 
-        return timezone != null ?
-                ZonedDateTime.of(dateTime, ZoneId.of("UTC")).withZoneSameInstant(timezone)
-                        .toLocalDateTime() :
-                dateTime;
+        return DateTimeUtils.migrateTimezone(dateTime, ZoneId.of("UTC"), timezone);
     }
 }

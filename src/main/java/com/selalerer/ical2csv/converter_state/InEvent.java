@@ -22,14 +22,10 @@ public class InEvent implements ConverterState {
 
         if ("END:VEVENT".equals(line)) {
             if (event.getStartTime() != null) {
-                if (!event.getStartTime().isBefore(context.getFromTime())) {
-                    context.getConsumer().accept(event);
-                }
+                if (!event.getStartTime().isBefore(context.getFromTimeInZone()) &&
+                    !event.getEndTime().isAfter(context.getToTimeInZone())) {
 
-                if (event.getStartTime().isAfter(context.getToTime())) {
-                    // No need to continue reading events
-                    // (assuming events are sorted by start time)
-                    return null;
+                    context.getConsumer().accept(event);
                 }
             }
             return new NotInEvent(context);
