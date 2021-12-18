@@ -12,8 +12,8 @@ import java.time.ZoneId;
 public class InEvent implements ConverterState {
 
     private final CalendarEvent event = new CalendarEvent();
-    private final ICalDateTimeParser dateTimeParser = new ICalDateTimeParser();
     private final ConverterStateContext context;
+
 
     public InEvent(ConverterStateContext context) {
         this.context = context;
@@ -25,18 +25,8 @@ public class InEvent implements ConverterState {
 
         if ("END:VEVENT".equals(line)) {
 			log.debug("{}", event);
-			log.debug("event start time is not null ? {}", event.getStartTime() != null);
-            if (event.getStartTime() != null) {
-				log.debug("Time range {} ==> {}", context.getFromTimeInZone(), context.getToTimeInZone());
-                if (!event.getStartTime().isBefore(context.getFromTimeInZone()) &&
-                    !event.getEndTime().isAfter(context.getToTimeInZone())) {
-
-					log.debug("Event is within defined time range.");
-                    context.getConsumer().accept(event);
-                } else {
-					log.debug("Event is not within defined time range.");
-				}
-            }
+			ICalUtils.splitToRepeatedEventsIfNecessary(event, context.getToTimeInZone())
+                    .forEach(this::handleEvent);
             return new NotInEvent(context);
         }
 
@@ -52,15 +42,34 @@ public class InEvent implements ConverterState {
             event.setStatus(ICalUtils.getValue(line));
         } else if (line.startsWith("SUMMARY:")) {
             event.setSummary(ICalUtils.getValue(line));
+        } else if (line.startsWith("RRULE:")) {
+            event.setRepeatRule(ICalUtils.parseRepeatRule(ICalUtils.getValue(line), ZoneId.of("UTC"), context.getTimezone()));
+        } else if (line.startsWith("EXDATE")) {
+            event.addExceptDate(parseDateTimeLine(line));
         }
 		
         return this;
+    }
+
+    private void handleEvent(CalendarEvent event) {
+        log.debug("Event start time is not null ? {}", event.getStartTime() != null);
+        if (event.getStartTime() != null) {
+            log.debug("Time range {} ==> {}", context.getFromTimeInZone(), context.getToTimeInZone());
+            if (!event.getStartTime().isBefore(context.getFromTimeInZone()) &&
+                !event.getEndTime().isAfter(context.getToTimeInZone())) {
+
+                log.debug("Event is within defined time range.");
+                context.getConsumer().accept(event);
+            } else {
+                log.debug("Event is not within defined time range.");
+            }
+        }
     }
 
     private LocalDateTime parseDateTimeLine(String line) {
         var fromTimezone = ICalUtils.getTimeZone(line, ZoneId.of("UTC"));
         var dateTimeString = ICalUtils.getValue(line);
 
-        return dateTimeParser.parse(dateTimeString, fromTimezone, context.getTimezone());
+        return ICalDateTimeParser.parse(dateTimeString, fromTimezone, context.getTimezone());
     }
 }
