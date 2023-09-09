@@ -23,7 +23,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 @Slf4j
 @Service
-public class CalendarTable implements Consumer<CalendarEvent> {
+public class CalendarTable {
 
     private final Map<LocalDateTime, String> timeSlotToSummaryMap = new HashMap<>();
 
@@ -32,8 +32,7 @@ public class CalendarTable implements Consumer<CalendarEvent> {
 
     private final Set<LocalDate> datesWithEvents = new HashSet<>();
 
-    @Override
-    public void accept(CalendarEvent calendarEvent) {
+    public void addEventToTable(CalendarEvent calendarEvent) {
 
         var timeSlot = calculateTimeSlot(calendarEvent.getStartTime());
 

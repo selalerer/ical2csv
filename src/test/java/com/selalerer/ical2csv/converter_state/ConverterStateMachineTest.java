@@ -42,15 +42,13 @@ public class ConverterStateMachineTest {
 
         var testSubject = new ConverterStateMachine(e -> {
             eventCount.incrementAndGet();
-            assertNull(e.getExceptDates(), "Except dates should be null after split");
-            assertNotEquals(LocalDateTime.of(2022, 12, 1, 5, 30), e.getStartTime());
         }, null, null);
 
         for (var line : eventStr.split("\n")) {
             testSubject.process(line);
         }
 
-        assertEquals(19, eventCount.get());
+        assertEquals(1, eventCount.get());
     }
 
 }

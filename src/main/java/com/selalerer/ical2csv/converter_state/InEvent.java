@@ -25,8 +25,7 @@ public class InEvent implements ConverterState {
 
         if ("END:VEVENT".equals(line)) {
 			log.debug("{}", event);
-			ICalUtils.splitToRepeatedEventsIfNecessary(event, context.getToTimeInZone())
-                    .forEach(this::handleEvent);
+			handleEvent(event);
             return new NotInEvent(context);
         }
 
@@ -46,6 +45,10 @@ public class InEvent implements ConverterState {
             event.setRepeatRule(ICalUtils.parseRepeatRule(ICalUtils.getValue(line), ZoneId.of("UTC"), context.getTimezone()));
         } else if (line.startsWith("EXDATE")) {
             event.addExceptDate(parseDateTimeLine(line));
+        } else if (line.startsWith("UID:")) {
+            event.setUid(ICalUtils.getValue(line));
+        } else if (line.startsWith("RECURRENCE-ID")) {
+            event.setRecurrenceId(parseDateTimeLine(line));
         }
 		
         return this;

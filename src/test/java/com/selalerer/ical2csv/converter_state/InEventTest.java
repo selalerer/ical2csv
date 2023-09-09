@@ -51,7 +51,7 @@ public class InEventTest {
 
         assertEquals(1, resultingEvents.size());
 
-        var resultSourceEvent = resultingEvents.get(0).getSourceEvent();
+        var resultSourceEvent = resultingEvents.get(0);
         assertEquals(LocalDateTime.of(2021, 1, 10, 12, 30),
                 resultSourceEvent.getStartTime());
         assertEquals(LocalDateTime.of(2021, 1, 10, 13, 30),
@@ -64,8 +64,5 @@ public class InEventTest {
         assertEquals(expectedRR, resultSourceEvent.getRepeatRule());
 
         assertEquals(3, resultSourceEvent.getExceptDates().size());
-
-        assertEquals(LocalDateTime.of(2021, 2, 7, 12, 30),
-                resultingEvents.get(0).getStartTime());
     }
 }

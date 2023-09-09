@@ -91,14 +91,13 @@ public class ICalUtils {
                 continue;
             }
 
-            var newEvent = new CalendarEvent();
-            newEvent.setSourceEvent(sourceEvent);
-            newEvent.setStartTime(eventTime);
-            newEvent.setEndTime(eventEndTime);
-            newEvent.setStatus(sourceEvent.getStatus());
-            newEvent.setSummary(sourceEvent.getSummary());
-            newEvent.setDescription(sourceEvent.getDescription());
-            newEvent.setLocation(sourceEvent.getLocation());
+            var newEvent = sourceEvent.toBuilder()
+                    .repeatRule(null)
+                    .exceptDates(null)
+                    .startTime(eventTime)
+                    .endTime(eventEndTime)
+                    .sourceEvent(sourceEvent)
+                    .build();
 
             result.add(newEvent);
         }

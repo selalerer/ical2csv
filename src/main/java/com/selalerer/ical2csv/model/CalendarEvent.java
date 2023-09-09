@@ -1,6 +1,9 @@
 package com.selalerer.ical2csv.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class CalendarEvent {
     private CalendarEvent sourceEvent;
     private LocalDateTime startTime;
@@ -18,6 +24,8 @@ public class CalendarEvent {
     private String description;
     private RepeatRule repeatRule;
     private List<LocalDateTime> exceptDates;
+    private String uid;
+    private LocalDateTime recurrenceId;
 
     public void addExceptDate(LocalDateTime exceptDate) {
         if (exceptDates == null) {
