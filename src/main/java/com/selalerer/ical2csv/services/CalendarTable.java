@@ -63,17 +63,17 @@ public class CalendarTable {
             Path monthFile = createMonthFilename(csvFile, month);
             log.info("Writing file {}", monthFile);
 
-	    try (var csvStream = Files.newOutputStream(monthFile, CREATE, TRUNCATE_EXISTING)) {
-		    // Write UTF-8 BOM
-		    csvStream.write(0xef);
-		    csvStream.write(0xbb);
-		    csvStream.write(0xbf);
+            try (var csvStream = Files.newOutputStream(monthFile, CREATE, TRUNCATE_EXISTING)) {
+                // Write UTF-8 BOM
+                csvStream.write(0xef);
+                csvStream.write(0xbb);
+                csvStream.write(0xbf);
 
-		    try (var csvWriter = new CSVWriter(new OutputStreamWriter(csvStream,"utf-8"));) {
+                try (var csvWriter = new CSVWriter(new OutputStreamWriter(csvStream, "utf-8"));) {
 
-			writeCsvHeader(csvWriter, fromDate, toDate);
-			writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
-		    }
+                    writeCsvHeader(csvWriter, fromDate, toDate);
+                    writeCsvLines(csvWriter, fromDate, toDate, fromHour, toHour);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -173,7 +173,8 @@ public class CalendarTable {
         if (minute <= 15) {
             return LocalDateTime.of(eventStartTime.toLocalDate(),
                     LocalTime.of(eventStartTime.getHour(), 0));
-        };
+        }
+        ;
 
         if (minute >= 16 && minute <= 45) {
             return LocalDateTime.of(eventStartTime.toLocalDate(),

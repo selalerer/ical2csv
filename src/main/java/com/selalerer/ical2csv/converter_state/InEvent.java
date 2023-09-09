@@ -57,17 +57,12 @@ public class InEvent implements ConverterState {
     private void handleEvent(CalendarEvent event) {
         log.debug("Event start time is not null ? {}", event.getStartTime() != null);
         if (event.getStartTime() != null) {
-            log.debug("Time range {} ==> {}", context.getFromTimeInZone(), context.getToTimeInZone());
-            if ((context.getFromTimeInZone() == null ||
-                    !event.getStartTime().isBefore(context.getFromTimeInZone())) &&
-                    (context.getToTimeInZone() == null ||
-                            !event.getEndTime().isAfter(context.getToTimeInZone()))) {
-
-                log.debug("Event is within defined time range.");
-                context.getConsumer().accept(event);
-            } else {
-                log.debug("Event is not within defined time range.");
-            }
+            System.out.println("SELA: handleEvent(): Giving event to consumer");
+            log.debug("Event is within defined time range.");
+            context.getConsumer().accept(event);
+        } else {
+            System.out.println("SELA: handleEvent(): Not giving event to consumer");
+            log.debug("Event is not within defined time range.");
         }
     }
 

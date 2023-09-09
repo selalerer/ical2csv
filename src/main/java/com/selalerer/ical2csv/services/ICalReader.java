@@ -6,37 +6,40 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
 public class ICalReader {
 
-    @SneakyThrows
-    public void readAll(Path icalInput,
-                        LocalDateTime fromTime, LocalDateTime toTime,
-                        Consumer<CalendarEvent> consumer) {
+    public void readAll(Stream<String> lineStream,
+                        Consumer<CalendarEvent> consumer,
+                        Consumer<ZoneId> zoneIdConsumer) {
 
-        try (var lineStream = Files.lines(icalInput);) {
+        var converter = new ConverterStateMachine(consumer, zoneIdConsumer);
 
-            var converter = new ConverterStateMachine(consumer, fromTime, toTime);
-
-            var lineNumber = 1;
-            var linesIterator = lineStream.iterator();
-            while (linesIterator.hasNext()) {
-                try {
-                    if (!converter.process(linesIterator.next())) {
-                        break;
-                    }
-                } catch (RuntimeException e) {
-                    log.error("Exception at line {}", lineNumber, e);
+        var lineNumber = 1;
+        var linesIterator = lineStream.iterator();
+        while (linesIterator.hasNext()) {
+            try {
+                var line = linesIterator.next();
+                if (!converter.process(line)) {
+                    break;
                 }
-                ++lineNumber;
+            } catch (RuntimeException e) {
+                log.error("Exception at line {}", lineNumber, e);
             }
+            ++lineNumber;
         }
     }
+
 
 }

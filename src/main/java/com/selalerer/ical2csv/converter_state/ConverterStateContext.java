@@ -14,15 +14,6 @@ import java.util.function.Consumer;
 @AllArgsConstructor(staticName = "of")
 public class ConverterStateContext {
     private Consumer<CalendarEvent> consumer;
-    private LocalDateTime fromTime;
-    private LocalDateTime toTime;
+    private Consumer<ZoneId> zoneIdConsumer;
     private ZoneId timezone;
-
-    public LocalDateTime getFromTimeInZone() {
-        return DateTimeUtils.migrateTimezone(getFromTime(), ZoneId.systemDefault(), getTimezone());
-    }
-
-    public LocalDateTime getToTimeInZone() {
-        return DateTimeUtils.migrateTimezone(getToTime(), ZoneId.systemDefault(), getTimezone());
-    }
 }

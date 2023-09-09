@@ -37,8 +37,7 @@ public class InEventTest {
         var resultingEvents = new ArrayList<CalendarEvent>();
 
         var context = ConverterStateContext.of(e -> resultingEvents.add(e),
-                LocalDateTime.of(2021, 1, 1, 0, 0),
-                LocalDateTime.of(2021, 4, 1, 0, 0),
+                zoneId -> {},
                 ZoneId.of("Asia/Jerusalem"));
 
         var testSubject = new InEvent(context);

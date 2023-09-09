@@ -42,7 +42,7 @@ public class ConverterStateMachineTest {
 
         var testSubject = new ConverterStateMachine(e -> {
             eventCount.incrementAndGet();
-        }, null, null);
+        }, null);
 
         for (var line : eventStr.split("\n")) {
             testSubject.process(line);

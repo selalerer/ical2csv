@@ -18,6 +18,9 @@ public class DateTimeUtils {
         if (toTz == null) {
             return input;
         }
+        if (input == null) {
+            return null;
+        }
         return ZonedDateTime.of(input, fromTz).withZoneSameInstant(toTz)
                 .toLocalDateTime();
     }

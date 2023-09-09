@@ -21,6 +21,9 @@ public class InTimezone implements ConverterState {
 
         if (line.startsWith("TZID:")) {
             context.setTimezone(ZoneId.of(ICalUtils.getValue(line)));
+            if (context.getZoneIdConsumer() != null) {
+                context.getZoneIdConsumer().accept(context.getTimezone());
+            }
         }
 
         return this;
