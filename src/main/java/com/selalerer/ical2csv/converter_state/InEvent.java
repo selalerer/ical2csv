@@ -55,8 +55,10 @@ public class InEvent implements ConverterState {
         log.debug("Event start time is not null ? {}", event.getStartTime() != null);
         if (event.getStartTime() != null) {
             log.debug("Time range {} ==> {}", context.getFromTimeInZone(), context.getToTimeInZone());
-            if (!event.getStartTime().isBefore(context.getFromTimeInZone()) &&
-                !event.getEndTime().isAfter(context.getToTimeInZone())) {
+            if ((context.getFromTimeInZone() == null ||
+                    !event.getStartTime().isBefore(context.getFromTimeInZone())) &&
+                    (context.getToTimeInZone() == null ||
+                            !event.getEndTime().isAfter(context.getToTimeInZone()))) {
 
                 log.debug("Event is within defined time range.");
                 context.getConsumer().accept(event);

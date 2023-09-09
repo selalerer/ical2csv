@@ -87,6 +87,10 @@ public class ICalUtils {
                 break;
             }
 
+            if (exceptDate.contains(eventTime)) {
+                continue;
+            }
+
             var newEvent = new CalendarEvent();
             newEvent.setSourceEvent(sourceEvent);
             newEvent.setStartTime(eventTime);
