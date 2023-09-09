@@ -38,7 +38,9 @@ public class CalendarTable {
 
         add(timeSlot, calendarEvent.getSummary());
         timeSlot = timeSlot.plusMinutes(30);
-        while (timeSlot.isBefore(calendarEvent.getEndTime())) {
+
+        var eventEndTime = calculateTimeSlot(calendarEvent.getEndTime());
+        while (timeSlot.isBefore(eventEndTime)) {
             add(timeSlot, calendarEvent.getSummary());
             timeSlot = timeSlot.plusMinutes(30);
         }
