@@ -49,7 +49,7 @@ public class InEventTest {
             testSubject.process(line);
         }
 
-        assertEquals(3, resultingEvents.size());
+        assertEquals(1, resultingEvents.size());
 
         var resultSourceEvent = resultingEvents.get(0).getSourceEvent();
         assertEquals(LocalDateTime.of(2021, 1, 10, 12, 30),
@@ -65,9 +65,7 @@ public class InEventTest {
 
         assertEquals(3, resultSourceEvent.getExceptDates().size());
 
-        var t3rdExceptDate = resultSourceEvent.getExceptDates().get(2);
-
-        assertEquals(LocalDateTime.of(2021, 1, 24, 12, 30),
-                t3rdExceptDate);
+        assertEquals(LocalDateTime.of(2021, 2, 7, 12, 30),
+                resultingEvents.get(0).getStartTime());
     }
 }

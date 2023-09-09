@@ -76,7 +76,7 @@ public class ICalUtilsTest {
         var results = ICalUtils.splitToRepeatedEventsIfNecessary(sourceEvent,
                 LocalDateTime.of(2021, 4, 1, 0, 0));
 
-        assertEquals(3, results.size());
+        assertEquals(1, results.size());
         assertTrue(results.stream().allMatch(e -> e.getSummary().equals("hello")));
         assertTrue(results.stream().anyMatch(e -> e.getStartTime().equals(
                 LocalDateTime.of(2021, 2, 7, 12, 30)
